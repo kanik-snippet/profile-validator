@@ -11,15 +11,15 @@ class JobStartRequest(BaseModel):
 
 
 class JobResponse(BaseModel):
-    id: int; proxy: str; platform: str; target_profiles: int; passed_profiles: int; attempts: int; status: str; message: Optional[str]; created_at: datetime
+    id: str; proxy: str; platform: str; target_profiles: int; passed_profiles: int; attempts: int; status: str; message: Optional[str]; created_at: datetime
     model_config = {"from_attributes": True}
 
 
 class ProfileResponse(BaseModel):
-    id: int; job_id: int; octo_profile_id: str; platform: str; proxy: str; status: str; created_at: datetime
+    id: str; job_id: str; octo_profile_id: str; platform: str; proxy: str; status: str; created_at: datetime
     model_config = {"from_attributes": True}
 
 
 class ResultResponse(BaseModel):
-    id: int; job_id: int; profile_id: Optional[int]; score: int; status: str; reason: str; screenshot_path: Optional[str]; created_at: datetime
+    id: str; job_id: str; profile_id: Optional[str]; score: int; status: str; reason: str; screenshot_path: Optional[str]; created_at: datetime
     model_config = {"from_attributes": True}
