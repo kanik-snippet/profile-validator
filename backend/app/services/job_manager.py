@@ -4,13 +4,13 @@ import logging
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.browser.controller import BrowserController
+from app.browser.manager import BrowserManager
 from app.core.config import get_settings
 from app.models import Job, Profile
 from app.octo.manager import OctoManager
 from app.services.result_manager import ResultManager
 from app.core.database import SessionLocal
-from app.verisoul.tester import VerisoulTester
+from app.verisoul.manager import VerisoulManager
 
 logger = logging.getLogger(__name__)
 

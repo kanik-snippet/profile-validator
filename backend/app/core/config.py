@@ -27,7 +27,14 @@ class Settings(BaseSettings):
 
     # Browser
     headless: bool = False
+    # Octo Browser
+    octo_api_token: str
+    octo_api_base_url: str
+    octo_local_api: str
 
+    # Verisoul
+    verisoul_api_key: str
+    verisoul_auth_url: str
     # Job Settings
     target_profiles: int = 10
     max_concurrent: int = 5
