@@ -1,53 +1,47 @@
 from __future__ import annotations
 
-from app.core.config import get_settings
-from app.schemas import (
-    VerisoulResult,
-    VerisoulSignals,
-    VerisoulVerdict,
-)
+from app.schemas import VerisoulResult
+
+from app.verisoul.auth import VerisoulAuth
+from app.verisoul.classifier import VerisoulClassifier
+from app.verisoul.parser import VerisoulParser
 
 
-class VerisoulClassifier:
+class VerisoulManager:
+    """
+    High-level service responsible for the complete
+    Verisoul verification workflow.
+
+        Authenticate
+            ↓
+        Parse Response
+            ↓
+        Classify Result
+            ↓
+        Return VerisoulResult
+    """
 
     def __init__(self) -> None:
 
-        settings = get_settings()
+        self.auth = VerisoulAuth()
+        self.parser = VerisoulParser()
+        self.classifier = VerisoulClassifier()
 
-        self.minimum_score = settings.verisoul_score_threshold
-
-    def classify(
+    async def verify(
         self,
-        signals: VerisoulSignals,
+        *,
+        session_id: str,
+        account: dict[str, str],
     ) -> VerisoulResult:
+        """
+        Executes the complete Verisoul verification flow.
+        """
 
-        if signals.score < self.minimum_score:
-            return VerisoulResult(
-                verdict=VerisoulVerdict.CLOSE,
-                score=signals.score,
-                reason="Score below threshold",
-                signals=signals,
-            )
-
-        if signals.proxy:
-            return VerisoulResult(
-                verdict=VerisoulVerdict.CLOSE,
-                score=signals.score,
-                reason="Proxy detected",
-                signals=signals,
-            )
-
-        if signals.emulator:
-            return VerisoulResult(
-                verdict=VerisoulVerdict.CLOSE,
-                score=signals.score,
-                reason="Emulator detected",
-                signals=signals,
-            )
-
-        return VerisoulResult(
-            verdict=VerisoulVerdict.KEEP,
-            score=signals.score,
-            reason="Verification passed",
-            signals=signals,
+        response = await self.auth.authenticate(
+            session_id=session_id,
+            account=account,
         )
+
+        signals = self.parser.parse(response)
+
+        return self.classifier.classify(signals)
